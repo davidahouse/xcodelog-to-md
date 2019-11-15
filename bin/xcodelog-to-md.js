@@ -79,14 +79,13 @@ function outputText() {
     files[key].errors.forEach(function(error) {
       if (sha != null && repoUrl != null) {
         console.log(
-          ":heavy_exclamation_mark: [" +
+          "[" +
+            key +
+            "(" +
             error.line +
             ":" +
             error.column +
-            "]" +
-            " [" +
-            key +
-            "](" +
+            ")](" +
             repoUrl +
             "/blob/" +
             sha +
@@ -95,27 +94,13 @@ function outputText() {
             ")"
         );
       } else {
-        console.log(
-          ":heavy_exclamation_mark: " +
-            key +
-            " [" +
-            error.line +
-            ":" +
-            error.column +
-            "]"
-        );
+        console.log(key + " (" + error.line + ":" + error.column + ")");
       }
 
-      console.log('<div class="highlight highlight-source-diff">');
-      console.log("<pre>");
-      console.log('<span class="pl-mi1">');
+      console.log("```");
       console.log(error.codeLine.trim());
-      console.log("</span>");
-      console.log('<span class="pl-md">');
-      console.log(error.error.trim());
-      console.log("</span>");
-      console.log("</pre>");
-      console.log("</div>");
+      console.log("```");
+      console.log("> :heavy_exclamation_mark: " + error.error.trim());
       console.log(" ");
       console.log("---");
       console.log(" ");
