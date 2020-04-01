@@ -36,7 +36,7 @@ lineReader.eachLine(input, function(line, last) {
     currentError = null;
   }
 
-  if (line.indexOf("error:") > 0) {
+  if (line.indexOf(" error:") > 0) {
     const parts = line.split("error:");
     const fileParts = parts[0].split(":");
     const file = fileParts[0];
