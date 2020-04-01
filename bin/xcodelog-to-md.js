@@ -2,34 +2,38 @@
 const fs = require("fs");
 const path = require("path");
 const lineReader = require("line-reader");
+const program = require("commander");
 
-const input = process.argv.length > 2 ? process.argv[2] : null;
-if (input == null) {
+program
+  .option("-i, --input <input>", "The path to the xcodebuild log file to parse")
+  .option(
+    "-r, --root <root>",
+    "The root of where the source code can be found so we can strip off paths in output"
+  )
+  .option("-o, --output <output>", "summary or text output")
+  .option(
+    "-s, --sha <sha>",
+    "The SHA for this commit so we can link to the error"
+  )
+  .option(
+    "-u, --url <url>",
+    "URL for the repository so we can link to the error"
+  );
+program.parse(process.argv);
+
+if (program.input == null) {
   console.log("No input file specified");
   process.exit(1);
 }
 
-let output = "summary";
-if (process.argv.length > 3) {
-  output = process.argv[3];
+let rootPrefix = path.dirname(path.resolve(program.input));
+if (program.root != null) {
+  rootPrefix = program.root;
 }
-
-let sha = null;
-if (process.argv.length > 4) {
-  sha = process.argv[4];
-}
-
-let repoUrl = null;
-if (process.argv.length > 5) {
-  repoUrl = process.argv[5];
-}
-
-const rootPrefix = path.dirname(path.resolve(input));
 const errors = [];
-const warnings = [];
 let currentError = null;
 
-lineReader.eachLine(input, function(line, last) {
+lineReader.eachLine(program.input, function(line, last) {
   if (currentError != null) {
     currentError.codeLine = line;
     errors.push(currentError);
@@ -53,7 +57,7 @@ lineReader.eachLine(input, function(line, last) {
   }
 
   if (last) {
-    if (output === "text") {
+    if (program.output === "text") {
       outputText();
     } else {
       outputSummary();
@@ -67,8 +71,7 @@ function outputText() {
     const fileName = error.file.replace(rootPrefix + "/", "").trim();
     if (files[fileName] == null) {
       files[fileName] = {
-        errors: [error],
-        warnings: []
+        errors: [error]
       };
     } else {
       files[fileName].errors.push(error);
@@ -77,7 +80,7 @@ function outputText() {
 
   Object.keys(files).forEach(function(key) {
     files[key].errors.forEach(function(error) {
-      if (sha != null && repoUrl != null) {
+      if (program.sha != null && program.url != null) {
         console.log(
           "[" +
             key +
@@ -86,9 +89,9 @@ function outputText() {
             ":" +
             error.column +
             ")](" +
-            repoUrl +
+            program.url +
             "/blob/" +
-            sha +
+            program.sha +
             "/" +
             key +
             ")"
@@ -112,7 +115,6 @@ function outputText() {
 function outputSummary() {
   console.log("### xcodebuild Summary:");
   console.log(" ");
-  console.log("- :warning: " + warnings.length.toString() + " Warning(s)");
   console.log(
     "- :heavy_exclamation_mark: " + errors.length.toString() + " Error(s)"
   );
