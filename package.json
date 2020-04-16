@@ -1,7 +1,7 @@
 {
   "name": "xcodelog-to-md",
   "main": "bin/xcodelog-to-md.js",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "A command line app for turning xcode output to markdown",
   "license": "MIT",
   "repository": "davidahouse/xcodelog-to-md",
