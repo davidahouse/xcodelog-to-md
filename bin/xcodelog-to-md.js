@@ -57,6 +57,12 @@ lineReader.eachLine(program.input, function (line, last) {
   }
 
   if (last) {
+    if (currentError != null) {
+      currentError.codeLine = line;
+      errors.push(currentError);
+      currentError = null;
+    }
+
     if (program.output === "text") {
       outputText();
     } else {
