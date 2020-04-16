@@ -54,6 +54,14 @@ lineReader.eachLine(program.input, function (line, last) {
       error: error,
       severity: "Error",
     };
+  } else if (line.indexOf("error:") == 0) {
+    currentError = {
+      file: "",
+      line: "",
+      column: "",
+      error: line,
+      severity: "Error",
+    };
   }
 
   if (last) {
