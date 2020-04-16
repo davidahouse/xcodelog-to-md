@@ -33,7 +33,7 @@ if (program.root != null) {
 const errors = [];
 let currentError = null;
 
-lineReader.eachLine(program.input, function(line, last) {
+lineReader.eachLine(program.input, function (line, last) {
   if (currentError != null) {
     currentError.codeLine = line;
     errors.push(currentError);
@@ -44,15 +44,15 @@ lineReader.eachLine(program.input, function(line, last) {
     const parts = line.split("error:");
     const fileParts = parts[0].split(":");
     const file = fileParts[0];
-    const errorLine = fileParts[1];
-    const errorColumn = fileParts[2];
+    const errorLine = fileParts.length > 1 ? fileParts[1] : "";
+    const errorColumn = fileParts.length > 2 ? fileParts[2] : "";
     const error = parts[1];
     currentError = {
       file: file,
       line: errorLine,
       column: errorColumn,
       error: error,
-      severity: "Error"
+      severity: "Error",
     };
   }
 
@@ -67,19 +67,19 @@ lineReader.eachLine(program.input, function(line, last) {
 
 function outputText() {
   let files = {};
-  errors.forEach(function(error) {
+  errors.forEach(function (error) {
     const fileName = error.file.replace(rootPrefix + "/", "").trim();
     if (files[fileName] == null) {
       files[fileName] = {
-        errors: [error]
+        errors: [error],
       };
     } else {
       files[fileName].errors.push(error);
     }
   });
 
-  Object.keys(files).forEach(function(key) {
-    files[key].errors.forEach(function(error) {
+  Object.keys(files).forEach(function (key) {
+    files[key].errors.forEach(function (error) {
       if (program.sha != null && program.url != null) {
         console.log(
           "[" +
