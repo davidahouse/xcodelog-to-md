@@ -62,6 +62,14 @@ lineReader.eachLine(program.input, function (line, last) {
       error: line,
       severity: "Error",
     };
+  } else if (line.indexOf("errSecInternalComponent") > 0) {
+    currentError = {
+      file: "",
+      line: "",
+      column: "",
+      error: "Certificate related codesign issue: " + line,
+      severity: "Error",
+    };
   }
 
   if (last) {
