@@ -70,6 +70,14 @@ lineReader.eachLine(program.input, function (line, last) {
       error: "Certificate related codesign issue: " + line,
       severity: "Error",
     };
+  } else if (line.indexOf("Code Signing Error:") >= 0) {
+    currentError = {
+      file: "",
+      line: "",
+      column: "",
+      error: line,
+      severity: "Error",
+    };
   }
 
   if (last) {
